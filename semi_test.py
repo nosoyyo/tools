@@ -96,4 +96,4 @@ if __name__ == '__main__':
 			for key in queue:
 #				if not queue[key].isPayloadSent:
 				queue[key].deliver(queue[key].dest)
-				time.sleep(60)
+				time.sleep(555)
