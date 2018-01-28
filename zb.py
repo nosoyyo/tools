@@ -6,11 +6,13 @@
 
 __author__ = 'nosoyyo'
 
+import gc
 import time
 
 import pymongo
 import requests
 from bs4 import BeautifulSoup
+from quickstart import boringWait
 
 # init pymongo
 client = pymongo.MongoClient("localhost", 27017)
@@ -108,6 +110,7 @@ def refreshAddList():
 
 	return add_list
 
+''' now integrated into quickstart
 def boringWait(t):
 
 	for n in range(0, t):
@@ -124,7 +127,7 @@ def boringWait(t):
 		n += 1
 
 	return
-
+'''
 
 # normally we run only this
 def main():
@@ -166,15 +169,15 @@ def main():
 			# number of combos
 			p.n_combos = len(soup.find_all('li')[22:])
 
-			# breakpoint
-			print('p ' + add_list[i] + ' n_combos ready! it has ' + str(p.n_combos) + ' combos')
-			time.sleep(0.1)
-
 			# grab all into combos
 			for k in range(0, p.n_combos):
 				# why am i so good at dealing with str splits, keke
 				p.combos.append(str(soup.find_all('li')[22:][k]).split('"')[3].split('/')[-1])
 				k += 1
+
+			# breakpoint
+			print('p ' + add_list[i] + ' n_combos ready! it has ' + str(p.n_combos) + ' combos: ' + str(p.combos[:len(p.combos)]))
+			time.sleep(0.1)
 
 			# breakpoint
 			print('p ' + add_list[i] + ' everything is ready for go!')
@@ -196,11 +199,18 @@ def main():
 			print('p ' + add_list[i] + ' everything in its mongodb! wait another t secs')
 			print('________________________')
 			
+			# report stats
+			time_usage = time.time() - started_at
+			print(str(i) + ' pics grabbed. ' + str(time_usage) + ' secs disappeared forever in your life.')
+
 			# countdown
 			boringWait(99)
 
 		else:
 			print('page ' + add_list[i] + ' already there, pass!')
+
+	# gc
+	gc.collect()
 
 	i += 1
 

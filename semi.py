@@ -7,22 +7,55 @@ import random
 import datetime
 
 from wxpy import *
+from quickstart import MongoDBPipeline
+
+# init pymongo
+pymongo_init = {
+            'MONGODB_SERVER' : 'localhost',
+            'MONGODB_PORT' : 27017,
+            'MONGODB_DB' : 'corpus',
+            'MONGODB_COLLECTION' : 'wx_group_messages',
+            }
+
+m = MongoDBPipeline(pymongo_init)
+
+# +++++++++++++++++++++++++
+# storing wx group messages
+# +++++++++++++++++++++++++
 
 # init bot
 bot = Bot(cache_path=True, console_qr=True)
+bot.enable_puid()
 
-# init groups
-groups = {
-           'msfc' : bot.groups().search('MSFC')[0],
-#          'snf' : bot.groups().search('陌生')[0],
-#          'snf_hq' : bot.groups().search('陌怪')[0],
+# init selected groups_puid
+groups_puid = {
+        'myself' : bot.self.puid,
+        'msfc' : bot.groups().search('MSFC')[0].puid,
+        'snf' : bot.groups().search('陌生')[0].puid,
+        '100k' : bot.groups().search('十万粉')[0].puid,
+        'snf_hq' : bot.groups().search('陌怪')[0].puid,
+        'sherry' : bot.groups().search('祝雪梨成功')[0].puid,
+        'dxns' : bot.groups().search('倒行逆施')[0].puid,
+        'sun_palace' : bot.groups().search('太阳宫')[0].puid,
+        'change_team' : bot.groups().search('换个新球队')[0].puid,
         }
 
-# here is the only place you need to add/remove, hopefully
-dest_list = [
-           'msfc',
-#            'snf',
-#           'snf_hq'
+# here is the only place you need to turn on/off, hopefully
+switch = [
+
+# personal
+            'myself'
+#           'msfc',
+            'snf',
+            'snf_hq',
+            'sherry',
+
+# zhihu
+            '100k',
+            'dxns',
+            'sun_palace',
+            'change_team',
+# football
             ]
 
 # debugging construct payload_list
@@ -56,17 +89,46 @@ class Delivery():
         return print('Successfully sent 1 payload.')
 
 # construct queue
-queue= {}
-for i in range(0, len(dest_list)):
-    queue[dest_list[i]] = Delivery()
-    queue[dest_list[i]].dest = groups[dest_list[i]]
-#   queue[dest_list[i]].payload = queue[dest_list[i]].loadUp(random.choice(payload_list))
+def queue():
+    queue= {}
+    for i in range(0, len(switch)):
+        queue[switch[i]] = Delivery()
+        queue[switch[i]].dest = groups_puid[switch[i]]
+    return queue
 
-# run once every 10 mins
-if __name__ == '__main__':
+def scheduledTask():
+    queue = queue()
     while True:
         if '7' in str(datetime.datetime.now().minute):
             for key in queue:
 #               if not queue[key].isPayloadSent:
                 queue[key].deliver(queue[key].dest)
-                time.sleep(60)
+                boringWait(100)
+
+def main():
+
+    # this script is only for store wx group messages for now
+    @bot.register(Group, except_self=False)
+    def storeGroupMessages(msg):
+
+        if msg.sender.puid in list(groups_puid.values()):
+            m.col.insert({
+                'group' : msg.sender.name,
+                'message_id' : msg.id,
+                'content' : msg.text,
+                'create_time' : msg.create_time.ctime(),
+                'sender' : msg.member.name,
+                'sender_puid' : msg.member.puid,
+                })
+            print('message \n' + msg + '\n stored!')
+        else:
+            print(msg + ' ignored')
+
+    print('start listening new messages...')
+
+    # block it up
+    bot.join()
+
+# run once every 10 mins
+if __name__ == '__main__':
+    main()
