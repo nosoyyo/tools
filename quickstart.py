@@ -153,42 +153,41 @@ class WxpyPipeline():
 # ===================================
 # Requests + BeautifulSoup quickstart
 # ===================================
-def cookSoup(url):
 
-    # init url
-    def init_url():
-        url = input('[quickstart] input url: \n http://')
-        url = 'http://' + url
-        return url
+# init requests with some random headers & cookies 
+headers = {}
+headers['User-Agent'] = randomUA()
 
-    # init requests with some random headers & cookies 
-    headers = {}
-    headers['User-Agent'] = randomUA()
+print('[quickstart] User-Agent: ' + headers['User-Agent'])
 
-    print('[quickstart] User-Agent: ' + headers['User-Agent'])
+headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
+headers['Accept-Encoding'] = 'gzip, deflate, br'
+headers['Accept-Language'] = 'zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,es;q=0.6,it;q=0.5'
+headers['Cache-Control'] = 'max-age=0'
+headers['Connection'] = 'keep-alive'
+headers['Host'] = ''
+headers['If-Modified-Since'] = 'Sun, 19 Feb 2017 08:59:20 GMT'
+headers['If-None-Match'] = "58a95e68-6bf6"
+headers['Referer'] = 'https://www.apple.com/jobs'
+headers['Upgrade-Insecure-Requests'] = '1'
 
-    headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
-    headers['Accept-Encoding'] = 'gzip, deflate, br'
-    headers['Accept-Language'] = 'zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,es;q=0.6,it;q=0.5'
-    headers['Cache-Control'] = 'max-age=0'
-    headers['Connection'] = 'keep-alive'
-    headers['Host'] = init_url()
-    headers['If-Modified-Since'] = 'Sun, 19 Feb 2017 08:59:20 GMT'
-    headers['If-None-Match'] = "58a95e68-6bf6"
-    headers['Referer'] = 'https://www.apple.com/jobs'
-    headers['Upgrade-Insecure-Requests'] = '1'
+cookies = {}
+cookies['Hm_lvt_9bf247c129df7989c3aba11b28931c6e'] = '1516780394'
+cookies['Hm_cv_9bf247c129df7989c3aba11b28931c6e'] = '1*user_id*'
+cookies['XSRF-TOKEN'] = 'eyJpdiI6InBlUXFjRnhLVmpBekk0Wm1KYWJDU3c9PSIsInZhbHVlIjoibTBuK2dJYnVjejZwd2p4ektkYWk2ZjByXC9sWTVxNEVEdTRxdGc0R1BpSmFuSHQ3NUJmTzJnbXU0VnpGWHJVTFpJZllOdmJhcW4yQXdKc2hnMlFXVEJnPT0iLCJtYWMiOiJiYjAwNTNkNTg1N2FlOTJmY2I2ZGZiMjNkYzM3OTA4ZDEwNThmMDBmZjY1ZjJmNmMwNTBkM2MzMjZjZjdmYzQxIn0%3D;'
+cookies['laravel_session'] = 'eyJpdiI6InRnXC9mMFU4R3RDVmM3QnQ2VDJXNHFnPT0iLCJ2YWx1ZSI6InZ2MmVqdVRoMm1uUzdab0h5YlZVYjl3SVVRbVNiUUs1N0t6XC8rZE01UWhQd3NMUmh5bHNUR1RqRkgrQVJGVjg0bzA1djA3T0JycjFxNGpucGRQQk1Fdz09IiwibWFjIjoiZGM5MDBjNWM0ZTM5OGIwMDQ0OWU1ZDlhYmRjYzJhZjRkMWY5MTM0OTYxOTQ5MTlmNTI5MmM4NGE2MGY1MzJjNiJ9'
+cookies['Hm_lpvt_9bf247c129df7989c3aba11b28931c6e'] = '1516849381'
 
-    print('[quickstart] headers ready!')
-    print(headers)
+# init url
+def init_url():
+    url = input('[quickstart] input url: \n http://')
+    url = 'http://' + url
+    return url
 
-    cookies = {}
-    cookies['Hm_lvt_9bf247c129df7989c3aba11b28931c6e'] = '1516780394'
-    cookies['Hm_cv_9bf247c129df7989c3aba11b28931c6e'] = '1*user_id*'
-    cookies['XSRF-TOKEN'] = 'eyJpdiI6InBlUXFjRnhLVmpBekk0Wm1KYWJDU3c9PSIsInZhbHVlIjoibTBuK2dJYnVjejZwd2p4ektkYWk2ZjByXC9sWTVxNEVEdTRxdGc0R1BpSmFuSHQ3NUJmTzJnbXU0VnpGWHJVTFpJZllOdmJhcW4yQXdKc2hnMlFXVEJnPT0iLCJtYWMiOiJiYjAwNTNkNTg1N2FlOTJmY2I2ZGZiMjNkYzM3OTA4ZDEwNThmMDBmZjY1ZjJmNmMwNTBkM2MzMjZjZjdmYzQxIn0%3D;'
-    cookies['laravel_session'] = 'eyJpdiI6InRnXC9mMFU4R3RDVmM3QnQ2VDJXNHFnPT0iLCJ2YWx1ZSI6InZ2MmVqdVRoMm1uUzdab0h5YlZVYjl3SVVRbVNiUUs1N0t6XC8rZE01UWhQd3NMUmh5bHNUR1RqRkgrQVJGVjg0bzA1djA3T0JycjFxNGpucGRQQk1Fdz09IiwibWFjIjoiZGM5MDBjNWM0ZTM5OGIwMDQ0OWU1ZDlhYmRjYzJhZjRkMWY5MTM0OTYxOTQ5MTlmNTI5MmM4NGE2MGY1MzJjNiJ9'
-    cookies['Hm_lpvt_9bf247c129df7989c3aba11b28931c6e'] = '1516849381'
+def cookSoup(url=init_url(), headers=headers, cookies=cookies):
 
-    print('[quickstart] cookies ready!')
+    headers['Host'] = url
+    print('[quickstart] url set to ' + url)
 
     # get soup ready
     print('[quickstart] getting response from ' + headers['Host'].split(".")[-2].split('//')[-1] + ' ...')
@@ -202,7 +201,13 @@ def cookSoup(url):
 # just for debugging:
 def main():
 
-    print('test')
+    try:
+        testurl = 'http://baidu.com'
+        testSoup = cookSoup(url=testurl)
+    except Exception as e:
+        raise e
+    finally:
+        print('test')
 
     return
 
