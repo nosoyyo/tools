@@ -112,15 +112,83 @@ def main():
     def storeGroupMessages(msg):
 
         if msg.sender.puid in list(groups_puid.values()):
-            m.col.insert({
-                'group' : msg.sender.name,
-                'message_id' : msg.id,
-                'content' : msg.text,
-                'create_time' : msg.create_time.ctime(),
-                'sender' : msg.member.name,
-                'sender_puid' : msg.member.puid,
-                })
-            print('message \n' + msg + '\n stored!')
+            if msg.type == 'Text':
+                m.col.insert({
+                    'group' : msg.sender.name,
+                    'message_id' : msg.id,
+                    'message_type' : msg.type,
+                    'content' : msg.text,
+                    'create_time' : msg.create_time.ctime(),
+                    'sender' : msg.member.name,
+                    'sender_puid' : msg.member.puid,
+                    })
+                print('message \n' + msg + '\n stored!')
+            elif msg.type == 'Picture':
+                m.col.insert({
+                    'group' : msg.sender.name,
+                    'message_id' : msg.id,
+                    'message_type' : msg.type,
+                    'file_type' : msg.file_name.split('.')[-1],
+                    'content' : msg.get_file(),
+                    'create_time' : msg.create_time.ctime(),
+                    'sender' : msg.member.name,
+                    'sender_puid' : msg.member.puid,
+                    })
+            elif msg.type == 'Sharing':
+                m.col.insert({
+                    'group' : msg.sender.name,
+                    'message_id' : msg.id,
+                    'message_type' : msg.type,
+                    'content' : msg.url,
+                    'create_time' : msg.create_time.ctime(),
+                    'sender' : msg.member.name,
+                    'sender_puid' : msg.member.puid,
+                    })
+            elif msg.type == 'Video':
+                m.col.insert({
+                    'group' : msg.sender.name,
+                    'message_id' : msg.id,
+                    'message_type' : msg.type,
+                    'file_type' : msg.file_name.split('.')[-1],
+                    'content' : msg.get_file(),
+                    'length' : play_length,
+                    'create_time' : msg.create_time.ctime(),
+                    'sender' : msg.member.name,
+                    'sender_puid' : msg.member.puid,
+                    })
+            elif msg.type == 'Recording':
+                m.col.insert({
+                    'group' : msg.sender.name,
+                    'message_id' : msg.id,
+                    'message_type' : msg.type,
+                    'file_type' : msg.file_name.split('.')[-1],
+                    'content' : msg.get_file(),
+                    'length' : msg.voice_length,
+                    'create_time' : msg.create_time.ctime(),
+                    'sender' : msg.member.name,
+                    'sender_puid' : msg.member.puid,
+                    })
+            elif msg.type == 'Attachment':
+                m.col.insert({
+                    'group' : msg.sender.name,
+                    'message_id' : msg.id,
+                    'message_type' : msg.type,
+                    'file_name' : msg.file_name,
+                    'content' : msg.get_file(),
+                    'create_time' : msg.create_time.ctime(),
+                    'sender' : msg.member.name,
+                    'sender_puid' : msg.member.puid,
+                    })
+            elif msg.type == 'Map':
+                m.col.insert({
+                    'group' : msg.sender.name,
+                    'message_id' : msg.id,
+                    'message_type' : msg.type,
+                    'content' : msg.location,
+                    'create_time' : msg.create_time.ctime(),
+                    'sender' : msg.member.name,
+                    'sender_puid' : msg.member.puid,
+                    })
         else:
             print(msg + ' ignored')
 

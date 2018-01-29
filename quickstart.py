@@ -1,14 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# index
+# boringWait()
+# class MongoDBPipeline()
+# class WxpyPipeline()
+# randomUA()
+# cookSoup()
+
+# todo: boringWait() reads poems while boring waiting
+# todo: randomUA add Android, PC etc.
+# todo: cookSoup(accept url as args)
+
 __author__ = 'nosoyyo'
 
 import time
-from bs4 import BeautifulSoup
+import random
+
 import pymongo
 import requests
+from wxpy import *
+from bs4 import BeautifulSoup
 
 # ===================
-# some toolkits below
+# private toys kekeke
 # ===================
 
 # when you feel boring sleeping, just call boringWait(t)
@@ -30,50 +45,63 @@ def boringWait(t):
     return
 
 
-# random ua
-user_agent_list = [\
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36 "
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 "  
-    "(KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1",  
-    "Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 "  
-    "(KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11",  
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 "  
-    "(KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6",  
-    "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.6 "  
-    "(KHTML, like Gecko) Chrome/20.0.1090.0 Safari/536.6",  
-    "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.1 "  
-    "(KHTML, like Gecko) Chrome/19.77.34.5 Safari/537.1",  
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 "  
-    "(KHTML, like Gecko) Chrome/19.0.1084.9 Safari/536.5",  
-    "Mozilla/5.0 (Windows NT 6.0) AppleWebKit/536.5 "  
-    "(KHTML, like Gecko) Chrome/19.0.1084.36 Safari/536.5",  
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 "  
-    "(KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3",  
-    "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/536.3 "  
-    "(KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3",  
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/536.3 "  
-    "(KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3",  
-    "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 "  
-    "(KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3",  
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 "  
-    "(KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3",  
-    "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 "  
-    "(KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3",  
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 "  
-    "(KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3",  
-    "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.3 "  
-    "(KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3",  
-    "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 "  
-    "(KHTML, like Gecko) Chrome/19.0.1061.0 Safari/536.3",  
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 "  
-    "(KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24",  
-    "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 "  
-    "(KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"  
-   ]
+# ==============
+# smtpPipeline()
+# ==============
 
-# ===================
-# some methods below
-# ===================
+import smtplib
+
+
+# =================
+# Random User-Agent
+# =================
+
+def randomUA():
+    user_agent_list = [\
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36 "
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 "  
+        "(KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1",  
+        "Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 "  
+        "(KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11",  
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 "  
+        "(KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6",  
+        "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.6 "  
+        "(KHTML, like Gecko) Chrome/20.0.1090.0 Safari/536.6",  
+        "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.1 "  
+        "(KHTML, like Gecko) Chrome/19.77.34.5 Safari/537.1",  
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 "  
+        "(KHTML, like Gecko) Chrome/19.0.1084.9 Safari/536.5",  
+        "Mozilla/5.0 (Windows NT 6.0) AppleWebKit/536.5 "  
+        "(KHTML, like Gecko) Chrome/19.0.1084.36 Safari/536.5",  
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 "  
+        "(KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3",  
+        "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/536.3 "  
+        "(KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3",  
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/536.3 "  
+        "(KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3",  
+        "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 "  
+        "(KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3",  
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 "  
+        "(KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3",  
+        "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 "  
+        "(KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3",  
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 "  
+        "(KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3",  
+        "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.3 "  
+        "(KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3",  
+        "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 "  
+        "(KHTML, like Gecko) Chrome/19.0.1061.0 Safari/536.3",  
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 "  
+        "(KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24",  
+        "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 "  
+        "(KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"  
+       ]
+    ua = random.choice(user_agent_list)
+    return ua
+
+# ==================
+# MongoDB quickstart
+# ==================
 
 # Initiate MongoDB
 mongodb_init = {
@@ -99,11 +127,33 @@ class MongoDBPipeline():
         self.col = self.db.get_collection(col)
         return self
 
+# ===============
+# wxpy quickstart
+# ===============
 
-# ======================
-# main()
-# ======================
-def main():
+class WxpyPipeline():
+
+    # init bot
+    bot = Bot(cache_path=True, console_qr=True)
+    bot.enable_puid()
+
+    staff = {
+        'myself' : bot.self,
+        'msfc' : bot.groups().search('MSFC')[0],
+        'snf' : bot.groups().search('陌生')[0],
+        '100k' : bot.groups().search('十万粉')[0],
+        'snf_hq' : bot.groups().search('陌怪')[0],
+        'sherry' : bot.groups().search('祝雪梨成功')[0],
+        'dxns' : bot.groups().search('倒行逆施')[0],
+        'sun_palace' : bot.groups().search('太阳宫')[0],
+        'change_team' : bot.groups().search('换个新球队')[0],
+        }
+
+
+# ===================================
+# Requests + BeautifulSoup quickstart
+# ===================================
+def cookSoup(url):
 
     # init url
     def init_url():
@@ -113,7 +163,10 @@ def main():
 
     # init requests with some random headers & cookies 
     headers = {}
-    headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.104 Safari/537.36 Core/1.53.3538.400 QQBrowser/9.6.12501.400'
+    headers['User-Agent'] = randomUA()
+
+    print('[quickstart] User-Agent: ' + headers['User-Agent'])
+
     headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
     headers['Accept-Encoding'] = 'gzip, deflate, br'
     headers['Accept-Language'] = 'zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,es;q=0.6,it;q=0.5'
@@ -126,6 +179,7 @@ def main():
     headers['Upgrade-Insecure-Requests'] = '1'
 
     print('[quickstart] headers ready!')
+    print(headers)
 
     cookies = {}
     cookies['Hm_lvt_9bf247c129df7989c3aba11b28931c6e'] = '1516780394'
@@ -142,7 +196,15 @@ def main():
     print('[quickstart] got response from ' + headers['Host'].split(".")[-2] + ' . now cooking soup...')
     soup = BeautifulSoup(response.text, "html.parser")
 
-    return print('[quickstart] soup ready. enjoy!')
+    print('[quickstart] soup ready. enjoy!')
+    return soup
+
+# just for debugging:
+def main():
+
+    print('test')
+
+    return
 
 if __name__ == '__main__':
     main()

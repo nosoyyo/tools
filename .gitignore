@@ -103,3 +103,13 @@ ENV/
 # wxpy
 *.pkl
 wxpy*
+
+# pictures
+*.jpg
+*.jpeg
+*.gif
+*.png
+*.tif
+*.tiff
+*.webp
+*.bmp
