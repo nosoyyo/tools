@@ -182,18 +182,16 @@ cookies['Hm_lpvt_9bf247c129df7989c3aba11b28931c6e'] = '1516849381'
 
 # init url
 url = ''
+cookies = {}
 
-def cookSoup(url, headers=headers, cookies=cookies):
+def cookSoup(url, headers=headers, *cookies=cookies):
 
-    #
-    cookies = {}
-
-    headers['Host'] = url
-    print('[quickstart] url set to ' + url)
+    #headers['Host'] = url
+    print('[quickstart] url set to ' + url + '\n')
 
     # get soup ready
     print('[quickstart] getting response from ' + headers['Host'].split(".")[-2].split('//')[-1] + ' ...')
-    response = requests.get(headers['Host'], headers = headers, cookies = cookies)
+    response = requests.get(url, headers = headers, cookies = cookies)
     print('[quickstart] got response from ' + headers['Host'].split(".")[-2] + ' . now cooking soup...')
     soup = BeautifulSoup(response.text, "html.parser")
 
