@@ -184,15 +184,15 @@ cookies['Hm_lpvt_9bf247c129df7989c3aba11b28931c6e'] = '1516849381'
 url = ''
 cookies = {}
 
-def cookSoup(url, headers=headers, *cookies=cookies):
+def cookSoup(url, headers=headers, *cookies):
 
     #headers['Host'] = url
     print('[quickstart] url set to ' + url + '\n')
 
     # get soup ready
-    print('[quickstart] getting response from ' + headers['Host'].split(".")[-2].split('//')[-1] + ' ...')
+    print('[quickstart] getting response from ' + url.split(".")[-2].split('//')[-1] + ' ...')
     response = requests.get(url, headers = headers, cookies = cookies)
-    print('[quickstart] got response from ' + headers['Host'].split(".")[-2] + ' . now cooking soup...')
+    print('[quickstart] got response from ' + url.split(".")[-2] + ' . now cooking soup...')
     soup = BeautifulSoup(response.text, "html.parser")
 
     print('[quickstart] soup ready. enjoy!')
@@ -201,7 +201,7 @@ def cookSoup(url, headers=headers, *cookies=cookies):
 # cook XHR soup
 xhr = ''
 
-def cookXHRSoup(url=xhr, headers=headers):
+def cookXHRSoup(url=xhr, headers=headers, *cookies):
 
     xhr_headers = headers
     xhr_headers['X-Requested-With'] = 'XMLHttpRequest'
