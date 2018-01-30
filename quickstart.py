@@ -203,13 +203,13 @@ def cookSoup(url, headers=headers, cookies=cookies):
 # cook XHR soup
 xhr = ''
 
-def XHRSoup(url=xhr, headers=headers):
+def cookXHRSoup(url=xhr, headers=headers):
 
     xhr_headers = headers
     xhr_headers['X-Requested-With'] = 'XMLHttpRequest'
     xhr_response = requests.get(url, headers=xhr_headers)
     xhr_soup = BeautifulSoup(xhr_response.text, "html.parser")
-    return soup
+    return xhr_soup
 
 # just for debugging:
 def main():
