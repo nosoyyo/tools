@@ -21,7 +21,7 @@ headers['If-None-Match'] = 'W/"f5120950b69079da50a9607f49285fb0"'
 headers['Referer'] = 'https://www.goodreads.com/quotes/tag/literature'
 headers['Upgrade-Insecure-Requests'] = '1'
 
-url = 'https://www.goodreads.com/quotes/tag/literature?page='
+# url = 'https://www.goodreads.com/quotes/tag/literature?page='
 
 # check if 30 quote divs
 def checkSoup(soup):
@@ -45,10 +45,10 @@ def getAuthorOrTitle(soup, i):
 	else:
 		return author
 
-def main(start_page):
+def main(start_page, tag):
 
 	# main loop
-	for i in range(start_page, 2854):
+	for i in range(start_page, 100):
 
 		print('now crawling page ' + str(i))
 
@@ -60,7 +60,7 @@ def main(start_page):
 			item_id = (i - 1)*30 + 1
 
 			# cook
-			url = 'https://www.goodreads.com/quotes/tag/literature?page=' + str(i)
+			url = 'https://www.goodreads.com/quotes/tag/' + tag + '?page=' + str(i)
 			soup = cookSoup(url, headers=headers)
 			checkSoup(soup)
 
@@ -95,7 +95,7 @@ def main(start_page):
 			
 			# take a nap
 			print('page ' + str(i) + ' everything done. now take a nap')
-			boringWait(round(random.random()*10+5))
+			boringWait(round(random.random()*8.8+8.8))
 
 		else:
 			print('item_id ' + str(m.col.find({'Content':content})[0]['item_id']) + ' already exsits')
@@ -103,4 +103,4 @@ def main(start_page):
 		i += 1
 
 if __name__ == '__main__':
-	main(1)
+	main(69, literature)
