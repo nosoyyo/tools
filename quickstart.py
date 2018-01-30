@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # index
-# boringWait()
+# boringWait() now reads simple lines stochastically
 # class MongoDBPipeline()
 # class WxpyPipeline()
 # randomUA()
@@ -10,7 +10,7 @@
 
 # todo: boringWait() reads poems while boring waiting
 # todo: randomUA add Android, PC etc.
-# todo: cookSoup(accept url as args)
+# todo: cookSoup(accept url/headers/cookies as args)
 
 __author__ = 'nosoyyo'
 
@@ -27,19 +27,21 @@ from bs4 import BeautifulSoup
 # ===================
 
 # when you feel boring sleeping, just call boringWait(t)
-def boringWait(t):
+def boringWait(t, s="It's very boring, isn't it?"):
 
     for n in range(0, t):
         if t <= 10:
             time.sleep(1)
             print(t - n)
         else:
-            if '5' in str(t - n):
+            if len(str(t-n)[0:]) > 1 and not str(t-n)[0] == 5:
                 time.sleep(1)
                 print(t - n)
             else:
                 time.sleep(1)
-                print('.', end="")
+                for m in range(0, round(len(s) / 2)):
+                    print(random.choices(s, k=m), end="")
+                    m += 1
         n += 1
 
     return
@@ -122,7 +124,7 @@ class MongoDBPipeline():
         self.db = self.client.get_database(some_setting_list['MONGODB_DB'])
         self.col = self.db.get_collection(some_setting_list['MONGODB_COLLECTION'])
 
-    def reset(self, db, col):
+    def switch(self, db, col):
         self.db = self.client.get_database(db)
         self.col = self.db.get_collection(col)
         return self
@@ -179,12 +181,12 @@ cookies['laravel_session'] = 'eyJpdiI6InRnXC9mMFU4R3RDVmM3QnQ2VDJXNHFnPT0iLCJ2YW
 cookies['Hm_lpvt_9bf247c129df7989c3aba11b28931c6e'] = '1516849381'
 
 # init url
-def init_url():
-    url = input('[quickstart] input url: \n http://')
-    url = 'http://' + url
-    return url
+url = ''
 
-def cookSoup(url=init_url(), headers=headers, cookies=cookies):
+def cookSoup(url, headers=headers, cookies=cookies):
+
+    #
+    cookies = {}
 
     headers['Host'] = url
     print('[quickstart] url set to ' + url)
@@ -198,12 +200,23 @@ def cookSoup(url=init_url(), headers=headers, cookies=cookies):
     print('[quickstart] soup ready. enjoy!')
     return soup
 
+# cook XHR soup
+xhr = ''
+
+def XHRSoup(url=xhr, headers=headers):
+
+    xhr_headers = headers
+    xhr_headers['X-Requested-With'] = 'XMLHttpRequest'
+    xhr_response = requests.get(url, headers=xhr_headers)
+    xhr_soup = BeautifulSoup(xhr_response.text, "html.parser")
+    return soup
+
 # just for debugging:
 def main():
 
     try:
         testurl = 'http://baidu.com'
-        testSoup = cookSoup(url=testurl)
+        testSoup = cookSoup(testurl)
     except Exception as e:
         raise e
     finally:
