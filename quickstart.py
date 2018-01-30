@@ -115,14 +115,14 @@ mongodb_init = {
 
 class MongoDBPipeline():
 
-    def __init__(self, some_setting_list):
+    def __init__(self, settings=mongodb_init):
 
         self.client = pymongo.MongoClient(
-            some_setting_list['MONGODB_SERVER'],
-            some_setting_list['MONGODB_PORT']
+            settings['MONGODB_SERVER'],
+            settings['MONGODB_PORT']
         )
-        self.db = self.client.get_database(some_setting_list['MONGODB_DB'])
-        self.col = self.db.get_collection(some_setting_list['MONGODB_COLLECTION'])
+        self.db = self.client.get_database(settings['MONGODB_DB'])
+        self.col = self.db.get_collection(settings['MONGODB_COLLECTION'])
 
     def switch(self, db, col):
         self.db = self.client.get_database(db)
