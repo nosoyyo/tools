@@ -2,15 +2,14 @@
 # -*- coding: utf-8 -*-
 
 # index
-# boringWait()
 # class MongoDBPipeline()
 # class WxpyPipeline()
 # randomUA()
-# cookSoup()
+# cookSoup(url, headers=headers, cookies=cookies)
+# boringWait(t, m) reads random literature while boring waiting
 
-# todo: boringWait() reads poems while boring waiting
+# todo: checkSoup()
 # todo: randomUA add Android, PC etc.
-# todo: cookSoup(accept url as args)
 
 __author__ = 'nosoyyo'
 
@@ -27,22 +26,112 @@ from bs4 import BeautifulSoup
 # ===================
 
 # when you feel boring sleeping, just call boringWait(t)
-def boringWait(t):
+def boringWait(t, m, s="It's very boring, isn't it?"):
+
+    #m = MongoDBPipeline()
+    m.switch('corpus','goodreads')
 
     for n in range(0, t):
         if t <= 10:
             time.sleep(1)
             print(t - n)
         else:
-            if '5' in str(t - n):
-                time.sleep(1)
-                print(t - n)
-            else:
-                time.sleep(1)
-                print('.', end="")
+            seed = m.col.find({'Author' : 'Milan Kundera'})[2]['Content']
+            seed = list(set(seed.split(' '))) + ['love', 'hate', 'wisdom', 'rich',]
+            literature = searchQuote(m, random.choice(seed), verbose=False)
+            content = random.choice(literature)['Content']
+            print(' ' * 6666)
+            time.sleep(1)
+            print(content)
+            time.sleep(9)
+            n -= 10
+
         n += 1
 
     return
+
+# =============================================================
+# goodreads methods, works with m.switch('corpus', 'goodreads')
+# ==============================================================
+
+def searchQuote(m, search, verbose=True):
+
+    s = getQuoteByAuthor(m, author=search, show_instance=False, verbose=verbose)
+    b = getQuoteByKeyword(m, keyword=search, show_instance=False, verbose=verbose)
+    sb = s + b
+
+    if not verbose == False:
+        print('\n' + str(len(sb)) + ' item(s) grabbed in total.')
+
+    return sb
+
+def getQuoteByAuthor(m, author='', show_instance=True, verbose=True):
+    l = []
+    q = []
+
+    # grab all
+    for item in m.col.find():
+        l.append(item)
+    
+    if verbose == True:
+        print('grabbing "' + author + '" in ' + str(len(l)) + ' items... \n')
+
+    # get content
+    for i in range(0, len(l)):
+        try:
+            if author in l[i]['Author'] or author.capitalize() in l[i]['Author']:
+                q.append(l[i])
+                i += 1
+        except KeyError:
+            if verbose == True:
+                print('ignoring some KeyError, dont panic')
+            else:
+                pass
+        finally:
+            i += 1
+    
+    if verbose == True:
+        print('\n' + str(len(q)) + ' author(s) found. \n')
+    
+    if show_instance == True and len(q) > 0:
+        instance = random.choice(q)
+        print('for instance, check this: \n' + instance['Content'] + '\n - ' + instance['Author'])
+
+    return q
+
+def getQuoteByKeyword(m, keyword='', show_instance=True, verbose=True):
+    l = []
+    q = []
+
+    # grab all
+    for item in m.col.find():
+        l.append(item)
+    
+    if verbose == True: 
+        print('grabbing "' + keyword + '" in ' + str(len(l)) + ' items... \n')
+
+    # get content
+    for i in range(0, len(l)):
+        try:
+            if keyword in l[i]['Content'] or keyword.capitalize() in l[i]['Content']:
+                q.append(l[i])
+                i += 1
+        except KeyError:
+            if verbose == True:
+                print('ignoring some KeyError, dont panic')
+            else:
+                pass
+        finally:
+            i += 1
+    
+    if verbose == True:
+        print('\n' + str(len(q)) + ' item(s) grabbed within contents. \n')
+    
+    if show_instance == True and len(q) > 0:
+        instance = random.choice(q)
+        print('for instance, check this: \n' + instance['Content'] + '\n - ' + instance['Author'])
+
+    return q
 
 
 # ==============
@@ -113,16 +202,16 @@ mongodb_init = {
 
 class MongoDBPipeline():
 
-    def __init__(self, some_setting_list):
+    def __init__(self, settings=mongodb_init):
 
         self.client = pymongo.MongoClient(
-            some_setting_list['MONGODB_SERVER'],
-            some_setting_list['MONGODB_PORT']
+            settings['MONGODB_SERVER'],
+            settings['MONGODB_PORT']
         )
-        self.db = self.client.get_database(some_setting_list['MONGODB_DB'])
-        self.col = self.db.get_collection(some_setting_list['MONGODB_COLLECTION'])
+        self.db = self.client.get_database(settings['MONGODB_DB'])
+        self.col = self.db.get_collection(settings['MONGODB_COLLECTION'])
 
-    def reset(self, db, col):
+    def switch(self, db, col):
         self.db = self.client.get_database(db)
         self.col = self.db.get_collection(col)
         return self
@@ -155,11 +244,18 @@ class WxpyPipeline():
 # ===================================
 
 # init requests with some random headers & cookies 
+
+
+url = ''
+cookies = {}
 headers = {}
 headers['User-Agent'] = randomUA()
 
-print('[quickstart] User-Agent: ' + headers['User-Agent'])
 
+# debug
+# print('[quickstart] User-Agent: ' + headers['User-Agent'])
+
+'''
 headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
 headers['Accept-Encoding'] = 'gzip, deflate, br'
 headers['Accept-Language'] = 'zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,es;q=0.6,it;q=0.5'
@@ -170,40 +266,55 @@ headers['If-Modified-Since'] = 'Sun, 19 Feb 2017 08:59:20 GMT'
 headers['If-None-Match'] = "58a95e68-6bf6"
 headers['Referer'] = 'https://www.apple.com/jobs'
 headers['Upgrade-Insecure-Requests'] = '1'
+'''
 
+'''
 cookies = {}
 cookies['Hm_lvt_9bf247c129df7989c3aba11b28931c6e'] = '1516780394'
 cookies['Hm_cv_9bf247c129df7989c3aba11b28931c6e'] = '1*user_id*'
 cookies['XSRF-TOKEN'] = 'eyJpdiI6InBlUXFjRnhLVmpBekk0Wm1KYWJDU3c9PSIsInZhbHVlIjoibTBuK2dJYnVjejZwd2p4ektkYWk2ZjByXC9sWTVxNEVEdTRxdGc0R1BpSmFuSHQ3NUJmTzJnbXU0VnpGWHJVTFpJZllOdmJhcW4yQXdKc2hnMlFXVEJnPT0iLCJtYWMiOiJiYjAwNTNkNTg1N2FlOTJmY2I2ZGZiMjNkYzM3OTA4ZDEwNThmMDBmZjY1ZjJmNmMwNTBkM2MzMjZjZjdmYzQxIn0%3D;'
 cookies['laravel_session'] = 'eyJpdiI6InRnXC9mMFU4R3RDVmM3QnQ2VDJXNHFnPT0iLCJ2YWx1ZSI6InZ2MmVqdVRoMm1uUzdab0h5YlZVYjl3SVVRbVNiUUs1N0t6XC8rZE01UWhQd3NMUmh5bHNUR1RqRkgrQVJGVjg0bzA1djA3T0JycjFxNGpucGRQQk1Fdz09IiwibWFjIjoiZGM5MDBjNWM0ZTM5OGIwMDQ0OWU1ZDlhYmRjYzJhZjRkMWY5MTM0OTYxOTQ5MTlmNTI5MmM4NGE2MGY1MzJjNiJ9'
 cookies['Hm_lpvt_9bf247c129df7989c3aba11b28931c6e'] = '1516849381'
+'''
 
-# init url
-def init_url():
-    url = input('[quickstart] input url: \n http://')
-    url = 'http://' + url
-    return url
+def cookSoup(url, headers=headers, cookies=cookies):
 
-def cookSoup(url=init_url(), headers=headers, cookies=cookies):
-
-    headers['Host'] = url
-    print('[quickstart] url set to ' + url)
+    #headers['Host'] = url
+    print('[quickstart] url set to ' + url + '\n')
 
     # get soup ready
-    print('[quickstart] getting response from ' + headers['Host'].split(".")[-2].split('//')[-1] + ' ...')
-    response = requests.get(headers['Host'], headers = headers, cookies = cookies)
-    print('[quickstart] got response from ' + headers['Host'].split(".")[-2] + ' . now cooking soup...')
+    print('[quickstart] getting response from ' + url.split(".")[-2].split('//')[-1] + ' ...')
+    response = requests.get(url, headers = headers, cookies = cookies)
+    print('[quickstart] got response from ' + url.split(".")[-2] + ' . now cooking soup...')
     soup = BeautifulSoup(response.text, "html.parser")
 
     print('[quickstart] soup ready. enjoy!')
     return soup
+
+# cook XHR soup
+xhr = ''
+
+def cookXHRSoup(url=xhr, headers=headers, cookies=cookies):
+
+    xhr_headers = headers
+    xhr_headers['X-Requested-With'] = 'XMLHttpRequest'
+    xhr_response = requests.get(url, headers=xhr_headers)
+    xhr_soup = BeautifulSoup(xhr_response.text, "html.parser")
+    return xhr_soup
+
+'''
+def soupCheck():
+
+
+    return
+'''
 
 # just for debugging:
 def main():
 
     try:
         testurl = 'http://baidu.com'
-        testSoup = cookSoup(url=testurl)
+        testSoup = cookSoup(testurl)
     except Exception as e:
         raise e
     finally:
