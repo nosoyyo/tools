@@ -5,98 +5,19 @@
 # v1.0
 
 # usage:
-# google(search, verbose=True)
+
+# searchQuote(search, verbose=True)
 # getQuoteByAuthor(author='', show_instance=True, verbose=True)
 # getQuoteByKeyword(keyword='', show_instance=True, verbose=True)
 
 import time
 import random
 
-from quickstart import MongoDBPipeline, cookSoup, boringWait
+from quickstart import MongoDBPipeline, cookSoup, boringWait, searchQuote, getQuoteByAuthor, getQuoteByKeyword
 
 # init mongo
 m = MongoDBPipeline()
 m.switch('corpus', 'goodreads')
-
-def google(search, verbose=True):
-
-	s = getQuoteByAuthor(author=search, show_instance=False, verbose=verbose)
-	b = getQuoteByKeyword(keyword=search, show_instance=False, verbose=verbose)
-	sb = s + b
-
-	if not verbose == False:
-		print('\n' + str(len(sb)) + ' item(s) grabbed in total.')
-
-	return sb
-
-def getQuoteByAuthor(author='', show_instance=True, verbose=True):
-	l = []
-	q = []
-
-	# grab all
-	for item in m.col.find():
-		l.append(item)
-	
-	if verbose == True:
-		print('grabbing "' + author + '" in ' + str(len(l)) + ' items... \n')
-
-	# get content
-	for i in range(0, len(l)):
-		try:
-			if author in l[i]['Author'] or author.capitalize() in l[i]['Author']:
-				q.append(l[i])
-				i += 1
-		except KeyError:
-			if verbose == True:
-				print('ignoring some KeyError, dont panic')
-			else:
-				pass
-		finally:
-			i += 1
-	
-	if verbose == True:
-		print('\n' + str(len(q)) + ' author(s) found. \n')
-	
-	if show_instance == True and len(q) > 0:
-		instance = random.choice(q)
-		print('for instance, check this: \n' + instance['Content'] + '\n - ' + instance['Author'])
-
-	return q
-
-def getQuoteByKeyword(keyword='', show_instance=True, verbose=True):
-	l = []
-	q = []
-
-	# grab all
-	for item in m.col.find():
-		l.append(item)
-	
-	if verbose == True:	
-		print('grabbing "' + keyword + '" in ' + str(len(l)) + ' items... \n')
-
-	# get content
-	for i in range(0, len(l)):
-		try:
-			if keyword in l[i]['Content'] or keyword.capitalize() in l[i]['Content']:
-				q.append(l[i])
-				i += 1
-		except KeyError:
-			if verbose == True:
-				print('ignoring some KeyError, dont panic')
-			else:
-				pass
-		finally:
-			i += 1
-	
-	if verbose == True:
-		print('\n' + str(len(q)) + ' item(s) grabbed within contents. \n')
-	
-	if show_instance == True and len(q) > 0:
-		instance = random.choice(q)
-		print('for instance, check this: \n' + instance['Content'] + '\n - ' + instance['Author'])
-
-	return q
-
 
 # ++++++++++++++++++++++++
 # grabbing part underneath
@@ -198,4 +119,8 @@ def main(start_page, tag):
 		i += 1
 
 if __name__ == '__main__':
+<<<<<<< HEAD
 	main(69, literature)
+=======
+	main(69, literature)
+>>>>>>> dev

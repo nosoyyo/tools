@@ -2,16 +2,17 @@
 # -*- coding: utf-8 -*-
 
 # index
-# boringWait() now reads simple lines stochastically
+
 # class MongoDBPipeline()
 # class WxpyPipeline()
 # randomUA()
-# cookSoup()
+# cookSoup(url, headers=headers, cookies=cookies)
+# boringWait(t, m) reads random literature while boring waiting
 
 # todo: checkSoup()
 # todo: boringWait() reads poems while boring waiting
 # todo: randomUA add Android, PC etc.
-# todo: cookSoup(accept url/headers/cookies as args)
+
 
 __author__ = 'nosoyyo'
 
@@ -28,9 +29,9 @@ from bs4 import BeautifulSoup
 # ===================
 
 # when you feel boring sleeping, just call boringWait(t)
-def boringWait(t, s="It's very boring, isn't it?"):
+def boringWait(t, m, s="It's very boring, isn't it?"):
 
-    m = MongoDBPipeline()
+    #m = MongoDBPipeline()
     m.switch('corpus','goodreads')
 
     for n in range(0, t):
@@ -38,15 +39,102 @@ def boringWait(t, s="It's very boring, isn't it?"):
             time.sleep(1)
             print(t - n)
         else:
-            if len(str(t-n)[0:]) > 1 and not str(t-n)[0] == 5:
-                time.sleep(1)
-                print(t - n)
-            else:
+            seed = m.col.find({'Author' : 'Milan Kundera'})[2]['Content']
+            seed = list(set(seed.split(' '))) + ['love', 'hate', 'wisdom', 'rich',]
+            literature = searchQuote(m, random.choice(seed), verbose=False)
+            content = random.choice(literature)['Content']
+            print(' ' * 6666)
+            time.sleep(1)
+            print(content)
+            time.sleep(9)
+            n -= 10
 
-                time.sleep(1)
         n += 1
 
     return
+
+# =============================================================
+# goodreads methods, works with m.switch('corpus', 'goodreads')
+# ==============================================================
+
+def searchQuote(m, search, verbose=True):
+
+    s = getQuoteByAuthor(m, author=search, show_instance=False, verbose=verbose)
+    b = getQuoteByKeyword(m, keyword=search, show_instance=False, verbose=verbose)
+    sb = s + b
+
+    if not verbose == False:
+        print('\n' + str(len(sb)) + ' item(s) grabbed in total.')
+
+    return sb
+
+def getQuoteByAuthor(m, author='', show_instance=True, verbose=True):
+    l = []
+    q = []
+
+    # grab all
+    for item in m.col.find():
+        l.append(item)
+    
+    if verbose == True:
+        print('grabbing "' + author + '" in ' + str(len(l)) + ' items... \n')
+
+    # get content
+    for i in range(0, len(l)):
+        try:
+            if author in l[i]['Author'] or author.capitalize() in l[i]['Author']:
+                q.append(l[i])
+                i += 1
+        except KeyError:
+            if verbose == True:
+                print('ignoring some KeyError, dont panic')
+            else:
+                pass
+        finally:
+            i += 1
+    
+    if verbose == True:
+        print('\n' + str(len(q)) + ' author(s) found. \n')
+    
+    if show_instance == True and len(q) > 0:
+        instance = random.choice(q)
+        print('for instance, check this: \n' + instance['Content'] + '\n - ' + instance['Author'])
+
+    return q
+
+def getQuoteByKeyword(m, keyword='', show_instance=True, verbose=True):
+    l = []
+    q = []
+
+    # grab all
+    for item in m.col.find():
+        l.append(item)
+    
+    if verbose == True: 
+        print('grabbing "' + keyword + '" in ' + str(len(l)) + ' items... \n')
+
+    # get content
+    for i in range(0, len(l)):
+        try:
+            if keyword in l[i]['Content'] or keyword.capitalize() in l[i]['Content']:
+                q.append(l[i])
+                i += 1
+        except KeyError:
+            if verbose == True:
+                print('ignoring some KeyError, dont panic')
+            else:
+                pass
+        finally:
+            i += 1
+    
+    if verbose == True:
+        print('\n' + str(len(q)) + ' item(s) grabbed within contents. \n')
+    
+    if show_instance == True and len(q) > 0:
+        instance = random.choice(q)
+        print('for instance, check this: \n' + instance['Content'] + '\n - ' + instance['Author'])
+
+    return q
 
 
 # ==============
