@@ -11,7 +11,7 @@ import requests
 from wxpy import *
 from bs4 import BeautifulSoup
 
-from quickstart import boringWait, MongoDBPipeline, mongodb_init, randomUA
+from quickstart import boringWait, MongoDBPipeline, mongodb_init, randomUA, cookSoup, cookXHRSoup
 
 # init pymongo
 m = MongoDBPipeline(mongodb_init)
@@ -47,17 +47,6 @@ def cookSoup(url=url, headers=headers):
     print('[tommyton] soup ready. enjoy!')
     return soup
 
-xhr = ''
-
-# cook XHR soup
-def cookXHRSoup(url=xhr, headers=headers):
-
-    xhr_headers = headers
-    xhr_headers['X-Requested-With'] = 'XMLHttpRequest'
-    xhr_response = requests.get(url, headers=xhr_headers)
-    xhr_soup = BeautifulSoup(xhr_response.text, "html.parser")
-    return xhr_soup
-
 # get tags in archive index page
 def getTags():
     tags = []
@@ -78,10 +67,6 @@ def getTags():
     tags = list(set(tags))
 
     return tags
-
-
-
-
 
 # get the a with the sources we want
 def getTheA(tag):
