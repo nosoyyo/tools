@@ -55,14 +55,10 @@ def main():
 		print('now grabbing ' + ml[i] + ' ...')
 
 		# check if exists
-<<<<<<< HEAD
-		#if len(m.col.find({'Media':ml[i]})[0].keys()) <= 2:
-		if True: #debug
-=======
+
 		if len(m.col.find({'Media':ml[i]})[0].keys()) <= 2:
 		#if True: #debug
->>>>>>> dev
-			
+		
 			try:	
 				# cookSoup()
 				#xhr = 'http://www.tommyton.com/#!/media/' + ml[i]
@@ -142,16 +138,11 @@ def main():
 				# debugging
 				#print(m.col.find({'Media' : ml[i]})[0])
 
-<<<<<<< HEAD
-			except Exception as e:
-				#print(e)
-				raise e
-=======
 			except ReadTimeout as e:
 				print(e)
 				i -= 1
 				#raise e
->>>>>>> dev
+
 			finally:
 				print("everything's alright, now go for the next in")
 				boringWait(round(random.random()*8.8+8.8))
