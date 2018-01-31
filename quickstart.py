@@ -136,14 +136,6 @@ def getQuoteByKeyword(m, keyword='', show_instance=True, verbose=True):
 
     return q
 
-
-# ==============
-# smtpPipeline()
-# ==============
-
-import smtplib
-
-
 # =================
 # Random User-Agent
 # =================

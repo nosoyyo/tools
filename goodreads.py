@@ -119,8 +119,4 @@ def main(start_page, tag):
 		i += 1
 
 if __name__ == '__main__':
-<<<<<<< HEAD
 	main(69, literature)
-=======
-	main(69, literature)
->>>>>>> dev
