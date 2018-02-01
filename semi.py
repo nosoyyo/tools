@@ -6,18 +6,16 @@ import time
 import random
 import datetime
 
-from wxpy import *
-from quickstart import MongoDBPipeline
+from pipelines import MongoDBPipeline, WxpyPipeline
+
+# init wx
+w = WxpyPipeline()
+bot = w.bot
 
 # init pymongo
-pymongo_init = {
-            'MONGODB_SERVER' : 'localhost',
-            'MONGODB_PORT' : 27017,
-            'MONGODB_DB' : 'corpus',
-            'MONGODB_COLLECTION' : 'wx_group_messages',
-            }
 
-m = MongoDBPipeline(pymongo_init)
+m = MongoDBPipeline()
+m.switch('nosoyyo', 'profile')
 
 # +++++++++++++++++++++++++
 # storing wx group messages
@@ -29,15 +27,15 @@ bot.enable_puid()
 
 # init selected groups_puid
 groups_puid = {
-        'myself' : bot.self.puid,
-        'msfc' : bot.groups().search('MSFC')[0].puid,
-        'snf' : bot.groups().search('陌生')[0].puid,
-        '100k' : bot.groups().search('十万粉')[0].puid,
-        'snf_hq' : bot.groups().search('陌怪')[0].puid,
-        'sherry' : bot.groups().search('祝雪梨成功')[0].puid,
-        'dxns' : bot.groups().search('倒行逆施')[0].puid,
-        'sun_palace' : bot.groups().search('太阳宫')[0].puid,
-        'change_team' : bot.groups().search('换个新球队')[0].puid,
+        'myself' : m.col.wx.find()[0]['groups']['myself']
+        'msfc' : m.col.wx.find()[0]['groups']['msfc']
+        'snf' : m.col.wx.find()[0]['groups']['snf']
+        '100k' : m.col.wx.find()[0]['groups']['100k']
+        'snf_hq' : m.col.wx.find()[0]['groups']['snf_hq']
+        'sherry' : m.col.wx.find()[0]['groups']['sherry']
+        'dxns' : m.col.wx.find()[0]['groups']['dxns']
+        'sun_palace' : m.col.wx.find()[0]['groups']['sun_palace']
+        'change_team' : m.col.wx.find()[0]['groups']['change_team']
         }
 
 # here is the only place you need to turn on/off, hopefully
