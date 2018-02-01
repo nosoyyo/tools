@@ -5,14 +5,13 @@ __author__ = 'nosoyyo'
 import time
 import random
 
-from quickstart import cookSoup
+from quickstart import cookSoup, randomUA
 from pretommy import headers, getTheSpan
 from pipelines import QiniuPipeline, MongoDBPipeline
 
+# init m, q
 m = MongoDBPipeline()
 m.switch('fashion', 'tommy')
-
-# init qiniu
 q = QiniuPipeline()
 
 # init headers

@@ -11,7 +11,8 @@ import requests
 from wxpy import *
 from bs4 import BeautifulSoup
 
-from quickstart import boringWait, MongoDBPipeline, mongodb_init, randomUA, cookSoup, cookXHRSoup
+from pipelines import  mongodb_init, MongoDBPipeline
+from quickstart import boringWait, randomUA, cookSoup, cookXHRSoup
 
 # init pymongo
 m = MongoDBPipeline(mongodb_init)

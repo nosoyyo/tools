@@ -13,6 +13,8 @@
 # q = QiniuPipeline()
 # downloadable_file_url = q.getFile(key)
 
+import pymongo
+
 from wxpy import *
 from qiniu import Auth, BucketManager, put_file, etag, urlsafe_base64_encode
 import qiniu.config
