@@ -113,3 +113,6 @@ wxpy*
 *.tiff
 *.webp
 *.bmp
+
+# json
+*.json
