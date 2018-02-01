@@ -8,9 +8,7 @@ import random
 from quickstart import *
 from pretommy import headers, getTheSpan
 
-# init
-media_list = ['yoyocelinebellsleeve1', 'pernilleoveralls3', 'pernloewe', 'backvetem', 'veronikaacne-1', 'aliceblomfeldt1', 'emmanuellegeraldineny', 'drakeldn3', 'gioceline1', 'celinetrapezegroup2', 'dakotagucci', 'camillebui', 'ss17-new-york-womens-8-20-of-31', 'dilettabparis6', 'ss17-london-womens-1-of-41', 'ss17-ny-womens-2-16-of-118', 'robertavete', 'leilacamel', 'veravancoach', 'dsc-2400', 'jlorenzoparis', 'guccirings', 'pinstripeceline', 'alexialv2', 'repossigaia4', 'mvacthparis-1', 'ss17-new-york-womens-8-15-of-31', 'alixny', 'celinesmoke1-1', 'natballv', 'cristinaparis1', 'isaacflony1', 'malgosiabelablack', 'frederikkeny', 'ss17-london-womens-10-of-41', 'pernilleldn', 'schaveznyc', 'ss17-milan-womens-62-of-84', 'azimmermilan', 'sylviadries1', 'lululv1', 'henderraf', 'ss17-london-womens-21-of-41', 'mansurgavrielstreet6', 'celinenetysl', 'lauraparis', 'dsc-2902', 'lvflts', 'saskianygivenchy2', 'ediemica', 'sharrisceline1', 'ursinalvgucci', 'gaialv3', 'iselingem', 'ss17-milan-womens-24-of-84', 'diorbuckles', 'celinekhakidets', 'jennybrooches2', 'alexcampernille', 'braschpajamas', 'anagmilan1', 'ss17-ny-womens-2-44-of-118', 'anyared2', 'ss17-new-york-womens-8-25-of-31', 'celinesleeve', 'pernilleceline13', 'alphabombgucci', 'michidelane', 'nicksullivanmilan', 'lamekacoach', 'lchadwick1', 'bellahadidparis', 'celinebags', 'taylorparis', 'celinelace', 'ss17-ny-womens-5-44-of-50', 'giorgiamilan1', 'guccimonogram2', 'masparis1', 'chanelbagssigns', 'natbalenciaga', 'rianneten1', 'yukislip', 'giovannaorange', 'pernillefringe1-copy', 'parismod1', 'acfparis', 'edunmansur', 'miragucciny2-1', 'ttaitvete1', 'jeanldn', 'adaloewe', 'ckaltuzarra', 'dsc-2211', 'celinering', 'mgceline', 'adaparis3-1', 'pernillemilano', 'lexibinxcoach-1', 'ss17-ny-womens-6-34-of-55', 'celinewhitesneakers', 'lilyaldridgeprotagonist', 'ss17-milan-womens-35-of-84', 'nyfloralblouse', 'celinezebrabag1', 'hayettldn1', 'mgrayceline1', 'luisaglv', 'celinesplitsleeve1', 'amaliecoach', 'repossilouisvuitton', 'veronikachloe1', 'celinedetails', 'ayacoach', 'waleskaberet', 'ss17-ny-womens-2-92-of-118', 'cbraschparis', 'crisrose', 'dossldn', 'rvrmicany-1', 'bateslayers', 'teddyshearling', 'vtrainany2', 'guccilogobags', 'aymelinevalentino', 'gildajwdries', 'romeeny', 'pernilleloeweny', 'celineparisorange1', 'emmanuelleparis', 'anyahindmarchnatgold2', 'stellataylor1', 'bagnet', 'lorelleparis1', 'marthahuntny2', 'ss17-new-york-womens-8-28-of-31', 'modelsdries', 'ttaitlthr', 'alessandracodgucci1', 'megangrayparisceline', 'guccisequins1-1', 'pernilleparislv1', 'francescomilan', 'vetementsgucci', 'cgdetails', 'ssampaiony', 'aspencersydney', 'hedcamtrioparis4', 'graceelizabeth', 'lvmas1', 'giacoppolagucci1', 'sharrisldn-1', 'jennymilan', 'vhalessandrarich1', 'hermestotebag', 'mansurgavrielstreet7', 'ss17-new-york-womens-7-57-of-72', 'ss17-london-womens-18-of-41', 'gildanyc', 'gildagiorgia', 'dsc-2236', 'takahirotokyo', 'irinacel', 'jwcufflv1', 'mirandakerrlv', 'gildatuileries2', 'ss17-new-york-womens-7-23-of-72', 'yasmingucci', 'ss17-ny-womens-2-48-of-118', 'anamilano1', 'ruthbellldn', 'lvtrioparis1', 'pernpleats', 'aymelineproenza', 'veronikaheillv2', 'ss17-ny-womens-2-65-of-118', 'ss17-london-womens-2-of-41', 'hgdior1', 'teddyhari', 'guccimonogrambag2-1', 'nywidebrim', 'nhartleyny', 'dakotakaren1', 'gildavetements1', 'loewenyc', 'ss17-london-womens-22-of-41', 'ss17-ny-womens-5-15-of-50', 'camnyc1', 'loeweaymeline', 'maartjeverhoefcoach', 'girlsmilano', 'bomberjktldn', 'miyakeceline', 'mansurgavrielstreet1', 'mansurgavrielstreet5', 'langleyfoxny', 'jennymilan-1', 'celineldn5', 'josephineskrivervs', 'ss17-ny-womens-6-15-of-55', 'pradavirgil', 'ss17-london-womens-41-of-41', 'veronikamilan1', 'alixnyc', 'adidasval', 'waleskagorczevskiparis2', 'ss17-new-york-womens-7-14-of-72', 'aspencerny', 'chloelvldn', 'arimilan', 'hgslip1', 'loewewindblown', 'lottaparis', 'celineluggageflat', 'sharrisgucci1', 'anninaallwhite4', 'guccifloralmono', 'crocheels', 'celineshrt', 'phoebeceline-1', 'pernillevetements', 'lchadwickny', 'lvcelinecoffee', 'anninamislinnyc3', 'lauralovegucci5', 'guccigrograin', 'crisherrman', 'adaparis1', 'maenyc', 'cbraschnielsonchanel3', 'fmlecel', 'megpattyny', 'celineearring', 'jennyny', 'juliahafstromparis', 'gaiarepossiphone', 'loliparis1', 'gaialoewesuede', 'karenelsongucci2', 'sophiebuhaiparis4', 'ildaracuin-asldn', 'lvmono', 'dsc-2614', 'sharrisldn-2', 'gildilet1', 'rippedgucciflats', 'leafceline1', 'hgotildaxiaofree', 'mdlcurlsldn', 'cherrmann1', 'lvtrio', 'gildapradany', 'camcha', 'dsc-2750', 'eweiss1', 'vetementsldn', 'gucciclogs', 'lvjane1', 'anjachloeparis9', 'dvnparis', 'anninamaiyet', 'candelaada', 'dilettalv']
-ml = media_list
+from pipelines import QiniuPipeline
 
 '''
 mongodb_init = {
@@ -21,8 +19,11 @@ mongodb_init = {
             }
             '''
 
-m = MongoDBPipeline(mongodb_init)
+m = MongoDBPipeline()
 m.switch('fashion', 'tommy')
+
+# init qiniu
+q = QiniuPipeline()
 
 # init headers
 headers = {}
@@ -32,6 +33,7 @@ headers['Accept-Encoding'] = 'gzip, deflate'
 headers['Accept-Language'] = 'zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,es;q=0.6,it;q=0.5'
 headers['Cache-Control'] = 'max-age=0'
 headers['Connection'] = 'keep-alive'
+#headers['Connection'] = 'closed'
 headers['Cookie'] = '_ga=GA1.2.818511824.1517175768; _gid=GA1.2.756456048.1517175768'
 headers['Host'] = 'www.tommyton.com'
 headers['Referer'] = ''
@@ -49,21 +51,24 @@ cookies['_gid'] = 'GA1.2.756456048.1517175768'
 
 # main
 def main():
-	for i in range(0, len(ml)):
+	
+	for i in range(0, m.col.media.count()):
+
+		print(i) # debug
 
 		# stating status
-		print('now grabbing ' + ml[i] + ' ...')
+		print('now grabbing ' + m.col.media.find()[i]['Media'] + ' ...')
 
 		# check if exists
-
-		if len(m.col.find({'Media':ml[i]})[0].keys()) <= 2:
+		print(i) # debug
+		if len(m.col.find({'Media' : m.col.media.find()[i]['Media']})[0].keys()) <= 2:
 		#if True: #debug
 		
 			try:	
 				# cookSoup()
-				#xhr = 'http://www.tommyton.com/#!/media/' + ml[i]
+				#xhr = 'http://www.tommyton.com/#!/media/' + m.col.media.find()[i]['Media']
 
-				url = 'http://www.tommyton.com/media/' + ml[i]
+				url = 'http://www.tommyton.com/media/' + m.col.media.find()[i]['Media']
 				soup = cookSoup(url, headers=headers, cookies=cookies)
 
 				# soupCheck, normal == 16
@@ -123,30 +128,50 @@ def main():
 					k += 1
 
 				# store
-				m.col.update({'Media':ml[i]},
+				m.col.update({'Media':m.col.media.find()[i]['Media']},
 					{
-					'Media' : ml[i],
+					'Media' : m.col.media.find()[i]['Media'],
 					'Desc' : desc,
 					'Date' : date,
 					'Photos' : photo_url_list,
 					'Tags' : tags,
 					})
 
+				# store pic upon Qiniu
+				pic_url = photo_url_list[-1]
+				ret = q.upload(pic_url)
+
+				if ret[1].ok():
+					print(pic_url + ' replicated upon Qiniu \n')
+				else:
+					print('something might be wrong with ' + pic_url)
+
 				# stating status
-				print('\n ' + ml[i] + 'stuff updated. \n')
+				print('\n ' + m.col.media.find()[i]['Media'] + 'stuff updated. \n')
 				
 				# debugging
-				#print(m.col.find({'Media' : ml[i]})[0])
+				#print(m.col.find({'Media' : m.col.media.find()[i]['Media']})[0])
 
-			except ReadTimeout as e:
+			except Exception as e:
+				print('~~~~~~~~~~~~~~~~')
 				print(e)
-				i -= 1
-				#raise e
+				print('~~~~~~~~~~~~~~~~')
 
 			finally:
-				print("everything's alright, now go for the next in")
-				boringWait(round(random.random()*8.8+8.8))
-				i += 1
+				print("\n everything's alright, now go for the next in 1 min.")
+				print(time.ctime().split()[-2])
+				#boringWait(3, m)
+				time.sleep(60)
+		
+		# i += 1should be here		
+		i += 1
+
 
 if __name__ == '__main__':
-	main()
+
+	try:
+		main()
+	except IndexError:
+		print('weird IndexError again')
+	finally:
+		print('hmmm.....')

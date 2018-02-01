@@ -43,7 +43,7 @@ def boringWait(t, m, s="It's very boring, isn't it?"):
             seed = list(set(seed.split(' '))) + ['love', 'hate', 'wisdom', 'rich',]
             literature = searchQuote(m, random.choice(seed), verbose=False)
             content = random.choice(literature)['Content']
-            print(' ' * 6666)
+            print(' ' * 8888)
             time.sleep(1)
             print(content)
             time.sleep(9)
@@ -279,11 +279,17 @@ def cookSoup(url, headers=headers, cookies=cookies):
 
     # get soup ready
     print('[quickstart] getting response from ' + url.split(".")[-2].split('//')[-1] + ' ...')
+    print('started at ' + time.ctime().split()[-2])
+    t = time.time()
     response = requests.get(url, headers = headers, cookies = cookies)
-    print('[quickstart] got response from ' + url.split(".")[-2] + ' . now cooking soup...')
-    soup = BeautifulSoup(response.text, "html.parser")
 
-    print('[quickstart] soup ready. enjoy!')
+    # debug
+    response.close()
+    
+    print('[quickstart] got response from ' + url.split(".")[-2] + ' . now cooking soup...')
+    
+    soup = BeautifulSoup(response.text, "html.parser")
+    print('soup ready in ' + str(int(time.time() - t)) + ' seconds.')
     return soup
 
 # cook XHR soup
