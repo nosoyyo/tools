@@ -17,6 +17,9 @@ from wxpy import *
 from qiniu import Auth, BucketManager, put_file, etag, urlsafe_base64_encode
 import qiniu.config
 
+# ================
+# Qiniu quickstart
+# ================
 
 class QiniuPipeline(object):
 
@@ -49,21 +52,6 @@ class QiniuPipeline(object):
 	def ls(self):
 		l = self.bucket.list(self.bucket_name)[0]['items']
 		return l
-
-
-	#生成上传 Token，可以指定过期时间等
-	#token = q.upload_token(bucket_name, key, 3600)
-
-'''
-#要上传文件的本地路径
-localfile = './sync/bbb.jpg'
-ret, info = put_file(token, key, localfile)
-
-print(info)
-assert ret['key'] == key
-assert ret['hash'] == etag(localfile)
-'''
-
 
 # ===============
 # wxpy quickstart
