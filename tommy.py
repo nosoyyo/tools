@@ -5,19 +5,9 @@ __author__ = 'nosoyyo'
 import time
 import random
 
-from quickstart import *
+from quickstart import cookSoup
 from pretommy import headers, getTheSpan
-
-from pipelines import QiniuPipeline
-
-'''
-mongodb_init = {
-            'MONGODB_SERVER' : 'localhost',
-            'MONGODB_PORT' : 27017,
-            'MONGODB_DB' : 'fashion',
-            'MONGODB_COLLECTION' : 'tommy',
-            }
-            '''
+from pipelines import QiniuPipeline, MongoDBPipeline
 
 m = MongoDBPipeline()
 m.switch('fashion', 'tommy')
@@ -33,17 +23,10 @@ headers['Accept-Encoding'] = 'gzip, deflate'
 headers['Accept-Language'] = 'zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,es;q=0.6,it;q=0.5'
 headers['Cache-Control'] = 'max-age=0'
 headers['Connection'] = 'keep-alive'
-#headers['Connection'] = 'closed'
 headers['Cookie'] = '_ga=GA1.2.818511824.1517175768; _gid=GA1.2.756456048.1517175768'
 headers['Host'] = 'www.tommyton.com'
 headers['Referer'] = ''
 headers['Upgrade-Insecure-Requests'] = '1'
-
-'''
-# init xhr if needed
-xhr_headers = headers
-xhr_headers['X-Requested-With'] = 'XMLHttpRequest'
-'''
 
 cookies = {}
 cookies['_ga'] = 'GA1.2.818511824.1517175768'
@@ -54,19 +37,13 @@ def main():
 	
 	for i in range(0, m.col.media.count()):
 
-		print(i) # debug
-
 		# stating status
 		print('now grabbing ' + m.col.media.find()[i]['Media'] + ' ...')
 
 		# check if exists
-		print(i) # debug
 		if len(m.col.find({'Media' : m.col.media.find()[i]['Media']})[0].keys()) <= 2:
-		#if True: #debug
 		
 			try:	
-				# cookSoup()
-				#xhr = 'http://www.tommyton.com/#!/media/' + m.col.media.find()[i]['Media']
 
 				url = 'http://www.tommyton.com/media/' + m.col.media.find()[i]['Media']
 				soup = cookSoup(url, headers=headers, cookies=cookies)
@@ -76,11 +53,6 @@ def main():
 					print('soup seems alright')
 				else:
 					print('pretty much a 400 Bad Request')
-
-				'''
-				# debug
-				print(soup)
-				'''
 
 				# get desc if there is one
 				if len(soup.select('p.media-module__description')) > 0:
@@ -149,9 +121,6 @@ def main():
 				# stating status
 				print('\n ' + m.col.media.find()[i]['Media'] + 'stuff updated. \n')
 				
-				# debugging
-				#print(m.col.find({'Media' : m.col.media.find()[i]['Media']})[0])
-
 			except Exception as e:
 				print('~~~~~~~~~~~~~~~~')
 				print(e)
@@ -162,8 +131,7 @@ def main():
 				print(time.ctime().split()[-2])
 				#boringWait(3, m)
 				time.sleep(60)
-		
-		# i += 1should be here		
+
 		i += 1
 
 

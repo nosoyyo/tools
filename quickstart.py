@@ -19,9 +19,7 @@ __author__ = 'nosoyyo'
 import time
 import random
 
-import pymongo
 import requests
-from wxpy import *
 from bs4 import BeautifulSoup
 
 # ===================
@@ -183,56 +181,6 @@ def randomUA():
     ua = random.choice(user_agent_list)
     return ua
 
-# ==================
-# MongoDB quickstart
-# ==================
-
-# Initiate MongoDB
-mongodb_init = {
-            'MONGODB_SERVER' : 'localhost',
-            'MONGODB_PORT' : 27017,
-            'MONGODB_DB' : 'testdb',
-            'MONGODB_COLLECTION' : 'testcol',
-            }
-
-class MongoDBPipeline():
-
-    def __init__(self, settings=mongodb_init):
-
-        self.client = pymongo.MongoClient(
-            settings['MONGODB_SERVER'],
-            settings['MONGODB_PORT']
-        )
-        self.db = self.client.get_database(settings['MONGODB_DB'])
-        self.col = self.db.get_collection(settings['MONGODB_COLLECTION'])
-
-    def switch(self, db, col):
-        self.db = self.client.get_database(db)
-        self.col = self.db.get_collection(col)
-        return self
-
-# ===============
-# wxpy quickstart
-# ===============
-
-class WxpyPipeline():
-
-    # init bot
-    bot = Bot(cache_path=True, console_qr=True)
-    bot.enable_puid()
-
-    staff = {
-        'myself' : bot.self,
-        'msfc' : bot.groups().search('MSFC')[0],
-        'snf' : bot.groups().search('陌生')[0],
-        '100k' : bot.groups().search('十万粉')[0],
-        'snf_hq' : bot.groups().search('陌怪')[0],
-        'sherry' : bot.groups().search('祝雪梨成功')[0],
-        'dxns' : bot.groups().search('倒行逆施')[0],
-        'sun_palace' : bot.groups().search('太阳宫')[0],
-        'change_team' : bot.groups().search('换个新球队')[0],
-        }
-
 
 # ===================================
 # Requests + BeautifulSoup quickstart
@@ -245,32 +193,6 @@ url = ''
 cookies = {}
 headers = {}
 headers['User-Agent'] = randomUA()
-
-
-# debug
-# print('[quickstart] User-Agent: ' + headers['User-Agent'])
-
-'''
-headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
-headers['Accept-Encoding'] = 'gzip, deflate, br'
-headers['Accept-Language'] = 'zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,es;q=0.6,it;q=0.5'
-headers['Cache-Control'] = 'max-age=0'
-headers['Connection'] = 'keep-alive'
-headers['Host'] = ''
-headers['If-Modified-Since'] = 'Sun, 19 Feb 2017 08:59:20 GMT'
-headers['If-None-Match'] = "58a95e68-6bf6"
-headers['Referer'] = 'https://www.apple.com/jobs'
-headers['Upgrade-Insecure-Requests'] = '1'
-'''
-
-'''
-cookies = {}
-cookies['Hm_lvt_9bf247c129df7989c3aba11b28931c6e'] = '1516780394'
-cookies['Hm_cv_9bf247c129df7989c3aba11b28931c6e'] = '1*user_id*'
-cookies['XSRF-TOKEN'] = 'eyJpdiI6InBlUXFjRnhLVmpBekk0Wm1KYWJDU3c9PSIsInZhbHVlIjoibTBuK2dJYnVjejZwd2p4ektkYWk2ZjByXC9sWTVxNEVEdTRxdGc0R1BpSmFuSHQ3NUJmTzJnbXU0VnpGWHJVTFpJZllOdmJhcW4yQXdKc2hnMlFXVEJnPT0iLCJtYWMiOiJiYjAwNTNkNTg1N2FlOTJmY2I2ZGZiMjNkYzM3OTA4ZDEwNThmMDBmZjY1ZjJmNmMwNTBkM2MzMjZjZjdmYzQxIn0%3D;'
-cookies['laravel_session'] = 'eyJpdiI6InRnXC9mMFU4R3RDVmM3QnQ2VDJXNHFnPT0iLCJ2YWx1ZSI6InZ2MmVqdVRoMm1uUzdab0h5YlZVYjl3SVVRbVNiUUs1N0t6XC8rZE01UWhQd3NMUmh5bHNUR1RqRkgrQVJGVjg0bzA1djA3T0JycjFxNGpucGRQQk1Fdz09IiwibWFjIjoiZGM5MDBjNWM0ZTM5OGIwMDQ0OWU1ZDlhYmRjYzJhZjRkMWY5MTM0OTYxOTQ5MTlmNTI5MmM4NGE2MGY1MzJjNiJ9'
-cookies['Hm_lpvt_9bf247c129df7989c3aba11b28931c6e'] = '1516849381'
-'''
 
 def cookSoup(url, headers=headers, cookies=cookies):
 

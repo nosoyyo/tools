@@ -13,6 +13,7 @@
 # q = QiniuPipeline()
 # downloadable_file_url = q.getFile(key)
 
+from wxpy import *
 from qiniu import Auth, BucketManager, put_file, etag, urlsafe_base64_encode
 import qiniu.config
 
@@ -45,8 +46,9 @@ class QiniuPipeline(object):
 		url = self.auth.private_download_url('http://p3f2fmqs8.bkt.clouddn.com/' + key)
 		return url
 
-
-
+	def ls(self):
+		l = self.bucket.list(self.bucket_name)[0]['items']
+		return l
 
 
 	#生成上传 Token，可以指定过期时间等
@@ -62,4 +64,54 @@ assert ret['key'] == key
 assert ret['hash'] == etag(localfile)
 '''
 
+
+# ===============
+# wxpy quickstart
+# ===============
+
+class WxpyPipeline():
+
+    # init bot
+    bot = Bot(cache_path=True, console_qr=True)
+    bot.enable_puid()
+
+    staff = {
+        'myself' : bot.self,
+        'msfc' : bot.groups().search('MSFC')[0],
+        'snf' : bot.groups().search('陌生')[0],
+        '100k' : bot.groups().search('十万粉')[0],
+        'snf_hq' : bot.groups().search('陌怪')[0],
+        'sherry' : bot.groups().search('祝雪梨成功')[0],
+        'dxns' : bot.groups().search('倒行逆施')[0],
+        'sun_palace' : bot.groups().search('太阳宫')[0],
+        'change_team' : bot.groups().search('换个新球队')[0],
+        }
+
+# ==================
+# MongoDB quickstart
+# ==================
+
+# Initiate MongoDB
+mongodb_init = {
+            'MONGODB_SERVER' : 'localhost',
+            'MONGODB_PORT' : 27017,
+            'MONGODB_DB' : 'testdb',
+            'MONGODB_COLLECTION' : 'testcol',
+            }
+
+class MongoDBPipeline():
+
+    def __init__(self, settings=mongodb_init):
+
+        self.client = pymongo.MongoClient(
+            settings['MONGODB_SERVER'],
+            settings['MONGODB_PORT']
+        )
+        self.db = self.client.get_database(settings['MONGODB_DB'])
+        self.col = self.db.get_collection(settings['MONGODB_COLLECTION'])
+
+    def switch(self, db, col):
+        self.db = self.client.get_database(db)
+        self.col = self.db.get_collection(col)
+        return self
 
