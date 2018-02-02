@@ -15,7 +15,9 @@ bot = w.bot
 # init pymongo
 
 m = MongoDBPipeline()
-m.switch('nosoyyo', 'profile')
+profile_col = m.setCol('nosoyyo', 'profile').col
+wx_db = 
+wx_col = m.setCol('corpus', 'wx').col
 
 # +++++++++++++++++++++++++
 # storing wx group messages
@@ -25,83 +27,35 @@ m.switch('nosoyyo', 'profile')
 bot = Bot(cache_path=True, console_qr=True)
 bot.enable_puid()
 
-# init selected groups_puid
-groups_puid = {
-        'myself' : m.col.wx.find()[0]['groups']['myself']
-        'msfc' : m.col.wx.find()[0]['groups']['msfc']
-        'snf' : m.col.wx.find()[0]['groups']['snf']
-        '100k' : m.col.wx.find()[0]['groups']['100k']
-        'snf_hq' : m.col.wx.find()[0]['groups']['snf_hq']
-        'sherry' : m.col.wx.find()[0]['groups']['sherry']
-        'dxns' : m.col.wx.find()[0]['groups']['dxns']
-        'sun_palace' : m.col.wx.find()[0]['groups']['sun_palace']
-        'change_team' : m.col.wx.find()[0]['groups']['change_team']
-        }
-
-# here is the only place you need to turn on/off, hopefully
-switch = [
-
-# personal
-            'myself'
-#           'msfc',
-            'snf',
-            'snf_hq',
-            'sherry',
-
-# zhihu
-            '100k',
-            'dxns',
-            'sun_palace',
-            'change_team',
-# football
-            ]
-
-# debugging construct payload_list
-# plan to get payload resource from some APIs
-payload_list = []
-
-# Delivery class
-class Delivery():
-    dest = ''
-    payload = ''
-#   isPayloadSent = False
-
-    def loadUp(self, payload):
-        self.payload = str(payload)
-#       isPayloadSent = False
-        print('1 payload ready to deliver: \'' + payload +'\'')
-        return payload
-
-    ''' 
-    def unLoad(self):
-        payload = ''
-        return payload
-    '''
+# mao4 pao4
+def bubble(type='blah'):
     
-    # deliver
-    def deliver(self, dest):
-        self.loadUp(random.choice(payload_list))
-        self.dest.send(self.payload)
-#       self.isPayloadSent = True
-#       self.unLoad()
-        return print('Successfully sent 1 payload.')
+    # stochastically speak something nonsense from blahlist
+    if type == 'blah':
+        
+        try:
+            blah_col = m.setCol('corpus','wx').col.blah
+            blah = random.choice(blah_col.find()[0]['snf'])
+            w.staff['snf'].send(blah)
 
-# construct queue
-def queue():
-    queue= {}
-    for i in range(0, len(switch)):
-        queue[switch[i]] = Delivery()
-        queue[switch[i]].dest = groups_puid[switch[i]]
-    return queue
+            result = print('blah-blahed\n[' + blah +']\ninto Strangers & Freaks.')
+        except Exception as e:
+            print(e)
 
-def scheduledTask():
-    queue = queue()
-    while True:
-        if '7' in str(datetime.datetime.now().minute):
-            for key in queue:
-#               if not queue[key].isPayloadSent:
-                queue[key].deliver(queue[key].dest)
-                boringWait(100)
+    # a.k.a 'a fallen night', randomly repeat something that was said by others some time ago.
+    elif type == 'recurrent':
+
+        try:
+            recurrent = 'grab somethin from corpus.wx.puid.asdfasdf'
+
+            result = 'result'
+        except Exception as e:
+            print(e)
+
+    else:
+        print('invalid bubble type')
+
+    return result
 
 def main():
 
@@ -111,7 +65,7 @@ def main():
 
         if msg.sender.puid in list(groups_puid.values()):
             if msg.type == 'Text':
-                m.col.insert({
+                wx_col.insert({
                     'group' : msg.sender.name,
                     'message_id' : msg.id,
                     'message_type' : msg.type,
@@ -122,7 +76,7 @@ def main():
                     })
                 print('message \n' + msg + '\n stored!')
             elif msg.type == 'Picture':
-                m.col.insert({
+                wx_col.insert({
                     'group' : msg.sender.name,
                     'message_id' : msg.id,
                     'message_type' : msg.type,
@@ -133,7 +87,7 @@ def main():
                     'sender_puid' : msg.member.puid,
                     })
             elif msg.type == 'Sharing':
-                m.col.insert({
+                wx_col.insert({
                     'group' : msg.sender.name,
                     'message_id' : msg.id,
                     'message_type' : msg.type,
@@ -143,7 +97,7 @@ def main():
                     'sender_puid' : msg.member.puid,
                     })
             elif msg.type == 'Video':
-                m.col.insert({
+                wx_col.insert({
                     'group' : msg.sender.name,
                     'message_id' : msg.id,
                     'message_type' : msg.type,
@@ -155,7 +109,7 @@ def main():
                     'sender_puid' : msg.member.puid,
                     })
             elif msg.type == 'Recording':
-                m.col.insert({
+                wx_col.insert({
                     'group' : msg.sender.name,
                     'message_id' : msg.id,
                     'message_type' : msg.type,
@@ -167,7 +121,7 @@ def main():
                     'sender_puid' : msg.member.puid,
                     })
             elif msg.type == 'Attachment':
-                m.col.insert({
+                wx_col.insert({
                     'group' : msg.sender.name,
                     'message_id' : msg.id,
                     'message_type' : msg.type,
@@ -178,7 +132,7 @@ def main():
                     'sender_puid' : msg.member.puid,
                     })
             elif msg.type == 'Map':
-                m.col.insert({
+                wx_col.insert({
                     'group' : msg.sender.name,
                     'message_id' : msg.id,
                     'message_type' : msg.type,
