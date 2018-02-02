@@ -16,8 +16,8 @@
 import pymongo
 
 from wxpy import *
-from qiniu import Auth, BucketManager, put_file, etag, urlsafe_base64_encode
-import qiniu.config
+# from qiniu import Auth, BucketManager, put_file, etag, urlsafe_base64_encode
+# import qiniu.config
 
 
 # ==================
@@ -40,6 +40,10 @@ settings = {
             'BUCKET_NAME' : 'msfc',
             'QINIU_USERNAME' : 'nosoyyo',
             'QINIU_PROFILE' : 'profile.qiniu',
+
+            # twitter
+            'TWITTER_USERNAME' : 'nosoyyo', 
+            'TWITTER_PROFILE' : 'profile.twitter',
            }
 
 # ==================
@@ -73,6 +77,7 @@ class MongoDBPipeline():
 
 class WxpyPipeline():
 
+    # init m
     m = MongoDBPipeline()
     puid_col = m.setCol('nosoyyo', 'profile').col.wx.puid
 
@@ -97,6 +102,10 @@ class WxpyPipeline():
 # ================
 
 class QiniuPipeline():
+
+    # import
+    from qiniu import Auth, BucketManager, put_file, etag, urlsafe_base64_encode
+    import qiniu.config
 
     m = MongoDBPipeline()
     keys = m.setCol(settings['QINIU_USERNAME'], settings['QINIU_PROFILE']).col.find()[0]['keys']
@@ -132,3 +141,27 @@ class QiniuPipeline():
     def count(self):
         c = len(self.bucket.list(self.bucket_name)[0]['items'])
         return c
+
+# ==================
+# Twitter quickstart
+# ==================
+
+class TwitterPipeline():
+    
+    # import
+    import tweepy
+
+    # init m
+    m = MongoDBPipeline()
+    keys = m.setCol(settings['TWITTER_USERNAME'], settings['TWITTER_PROFILE']).col.find()[0]['keys']
+
+    # get keys
+    consumer_key = keys['consumer_key']
+    consumer_secret = keys['consumer_secret']
+    access_token = keys['access_token']
+    access_token_secret = keys['access_token_secret']
+
+    # auth and get APIs
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret) 
+    auth.set_access_token(access_token, access_token_secret)
+    api = tweepy.API(auth)
