@@ -6,56 +6,69 @@ import time
 import random
 import datetime
 
+from wxpy import *
 from pipelines import MongoDBPipeline, WxpyPipeline
 
 # init wx
 w = WxpyPipeline()
 bot = w.bot
+w.staff = {
+    'myself' : bot.self,
+    'msfc' : bot.search(puid=w.puid_col.find()[0]['msfc']),
+    'snf' : bot.search(puid=w.puid_col.find()[0]['snf']),
+    '100k' : bot.search(puid=w.puid_col.find()[0]['100k']),
+    'snf_hq' : bot.search(puid=w.puid_col.find()[0]['snf_hq']),
+    'sherry' : bot.search(puid=w.puid_col.find()[0]['sherry']),
+    'dxns' : bot.search(puid=w.puid_col.find()[0]['dxns']),
+    'sun_palace' : bot.search(puid=w.puid_col.find()[0]['sun_palace']),
+    'change_team' : bot.search(puid=w.puid_col.find()[0]['change_team']),
+    }
 
-# init pymongo
-
+# init mongo
 m = MongoDBPipeline()
 profile_col = m.setCol('nosoyyo', 'profile').col
-wx_db = 
-wx_col = m.setCol('corpus', 'wx').col
 
 # +++++++++++++++++++++++++
 # storing wx group messages
 # +++++++++++++++++++++++++
 
-# init bot
-bot = Bot(cache_path=True, console_qr=True)
-bot.enable_puid()
-
 # mao4 pao4
-def bubble(type='blah'):
+def bubble(type='b'):
     
     # stochastically speak something nonsense from blahlist
-    if type == 'blah':
+    if type == 'b':
         
         try:
+            # empty col for now
             blah_col = m.setCol('corpus','wx').col.blah
             blah = random.choice(blah_col.find()[0]['snf'])
-            w.staff['snf'].send(blah)
+            w.staff['snf'][0].send(blah)
 
-            result = print('blah-blahed\n[' + blah +']\ninto Strangers & Freaks.')
+            # result
+            print('blah-blahed\n[' + blah +']\ninto Strangers & Freaks.')
         except Exception as e:
             print(e)
 
     # a.k.a 'a fallen night', randomly repeat something that was said by others some time ago.
-    elif type == 'recurrent':
+    elif type == 'r':
 
         try:
-            recurrent = 'grab somethin from corpus.wx.puid.asdfasdf'
+            cl = []
+            for i in range(0,m.setCol('corpus','wx.bb5b803d').col.count()):
+                cl.append(m.setCol('corpus','wx.bb5b803d').col.find()[i]['content'])
+                i += 1
+            recurrent = random.choice(cl)
+            w.staff['snf'][0].send(recurrent)
 
-            result = 'result'
+            # result
+            print('re-send['+recurrent+'] .')
         except Exception as e:
             print(e)
 
     else:
         print('invalid bubble type')
 
-    return result
+    return
 
 def main():
 
@@ -63,7 +76,10 @@ def main():
     @bot.register(Group, except_self=False)
     def storeGroupMessages(msg):
 
-        if msg.sender.puid in list(groups_puid.values()):
+        # set storing place, store messages by `the sender`.puid, it's group puid when `the sender` is group.
+        wx_col = m.setCol('corpus', 'wx.' + msg.sender.puid).col
+
+        if msg.sender.puid in w.puid_col.find()[0].values():
             if msg.type == 'Text':
                 wx_col.insert({
                     'group' : msg.sender.name,

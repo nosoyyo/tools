@@ -35,6 +35,8 @@ settings = {
             # Wxpy
             'WxpyUser' : 'nosoyyo',
             'WxpyProfileCol' : 'profile',
+            'cache_path' : True,
+            'console_qr' : True,
            
             # Qiniu
             'BUCKET_NAME' : 'msfc',
@@ -71,31 +73,26 @@ class MongoDBPipeline():
         self.col = self.db.get_collection(col)
         return self
 
+    def ls(self):
+        return self.db.list_collection_names()
+
+
 # ===============
 # wxpy quickstart
 # ===============
 
 class WxpyPipeline():
 
-    # init m
+    def __init__(self,settings=settings, cache_path=True, console_qr=True,):
+        self.bot = Bot(settings['cache_path'], settings['console_qr'])
+        self.bot.enable_puid()
+        return 
+
     m = MongoDBPipeline()
     puid_col = m.setCol('nosoyyo', 'profile').col.wx.puid
 
-    # init bot
-    bot = Bot(cache_path=True, console_qr=True)
-    bot.enable_puid()
+    # get staff list
 
-    staff = {
-        'myself' : bot.self,
-        'msfc' : bot.search(puid=puid_col.find()[0]['msfc']),
-        'snf' : bot.search(puid=puid_col.find()[0]['snf']),
-        '100k' : bot.search(puid=puid_col.find()[0]['100k']),
-        'snf_hq' : bot.search(puid=puid_col.find()[0]['snf_hq']),
-        'sherry' : bot.search(puid=puid_col.find()[0]['sherry']),
-        'dxns' : bot.search(puid=puid_col.find()[0]['dxns']),
-        'sun_palace' : bot.search(puid=puid_col.find()[0]['sun_palace']),
-        'change_team' : bot.search(puid=puid_col.find()[0]['change_team']),
-        }
 
 # ================
 # Qiniu quickstart
