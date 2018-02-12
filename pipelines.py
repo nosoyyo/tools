@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # flake8: noqa
-
+# @vån
+__author__ = 'nosoyyo'
 
 # usage
 # 
@@ -13,27 +14,32 @@
 # q = QiniuPipeline()
 # downloadable_file_url = q.getFile(key)
 
+# 0.1 basically setup
+# 0.2 base class changed into singleton mode; added user/pwd auth;
+
 import pymongo
-
 from wxpy import *
-# from qiniu import Auth, BucketManager, put_file, etag, urlsafe_base64_encode
-# import qiniu.config
-
-
-# ==================
-# Pipeline Base Class
-# ==================
 
 # init
 settings = {
-            # MongoDB
-            'MONGODB_SERVER' : 'localhost',
+            #'MONGODB_SERVER' : 'localhost',
+            'MONGODB_SERVER' : '123.207.40.50',
             'MONGODB_PORT' : 27017,
+
+            # password doesn't work this way
+            'MONGODB_USERNAME' : 'test',
+            #'MONGODB_PASSWORD' : 'testPassword',
+
+            'MONGODB_SSL' : False,
+            'MONGODB_SSL_CERTFILE' : '/etc/ssl/client.pem',
+            'MONGODB_SSL_KEYFILE' : '/etc/ssl/mongodb.pem',
             'MONGODB_DB' : 'testdb',
-            'MONGODB_COLLECTION' : 'testcol',
+            'MONGODB_COL' : 'testcol',
 
             # Wxpy
-            'WxpyUser' : 'nosoyyo',
+            'WxpyDBName' : 'nosoyyo',
+            'WxpyUsername' : 'test',
+            'WxpyPassword' : 'testPassword',
             'WxpyProfileCol' : 'profile',
             'cache_path' : True,
             'console_qr' : True,
@@ -42,6 +48,7 @@ settings = {
             'BUCKET_NAME' : 'msfc',
             'QINIU_USERNAME' : 'nosoyyo',
             'QINIU_PROFILE' : 'profile.qiniu',
+            'QINIU_PRIVATE' : 'http://p3f2fmqs8.bkt.clouddn.com/',
 
             # twitter
             'TWITTER_USERNAME' : 'nosoyyo', 
@@ -52,25 +59,37 @@ settings = {
 # MongoDB quickstart
 # ==================
 
-# v0.1
-class MongoDBPipeline():
+class Singleton(object):
+    _instance = None
+    def __new__(cls, dbname, username, password, *args, **kw):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__new__(cls, *args, **kw)  
+        return cls._instance 
 
-    def __init__(self, settings=settings):
+class MongoDBPipeline(Singleton):
+
+    def __init__(self, dbname, username, password, settings=settings, ):
 
         self.client = pymongo.MongoClient(
             settings['MONGODB_SERVER'],
-            settings['MONGODB_PORT']
+            settings['MONGODB_PORT'],
+            username=username,
+            password=password,
+            ssl=settings['MONGODB_SSL'],
+            #ssl_certfile=settings['MONGODB_SSL_CERTFILE'],
+            #ssl_keyfile=settings['MONGODB_SSL_KEYFILE'],
         )
-        self.db = self.client.get_database(settings['MONGODB_DB'])
-        self.col = self.db.get_collection(settings['MONGODB_COLLECTION'])
+        self.db = self.client.get_database(dbname)
+        self.auth = self.db.authenticate(username, password)
+        self.col = self.db.get_collection(settings['MONGODB_COL'])
 
-    def setDB(self, db):
-        self.db = self.client.get_database(db)
+    def setDB(self, dbname):
+        self.db = self.client.get_database(dbname)
         return self
 
-    def setCol(self, db, col):
-        self.db = self.client.get_database(db)
-        self.col = self.db.get_collection(col)
+    def setCol(self, dbname, colname):
+        self.db = self.client.get_database(dbname)
+        self.col = self.db.get_collection(colname)
         return self
 
     def ls(self):
@@ -83,13 +102,13 @@ class MongoDBPipeline():
 
 class WxpyPipeline():
 
-    def __init__(self,settings=settings, cache_path=True, console_qr=True,):
+    def __init__(self, cache_path=True, console_qr=True,):
         self.bot = Bot(settings['cache_path'], settings['console_qr'])
         self.bot.enable_puid()
         return 
 
-    m = MongoDBPipeline()
-    puid_col = m.setCol('nosoyyo', 'profile').col.wx.puid
+    m = MongoDBPipeline(settings['WxpyDBName'], settings['WxpyUsername'], settings['WxpyPassword'])
+    puid_col = m.setCol(settings['WxpyDBName'], 'profile').col.wx.puid
 
     # get staff list
 
@@ -104,15 +123,18 @@ class QiniuPipeline():
     from qiniu import Auth, BucketManager, put_file, etag, urlsafe_base64_encode
     import qiniu.config
 
-    m = MongoDBPipeline()
-    keys = m.setCol(settings['QINIU_USERNAME'], settings['QINIU_PROFILE']).col.find()[0]['keys']
-    access_key = keys['access_key']
-    secret_key = keys['secret_key']
-    # 构建鉴权对象
-    auth = Auth(access_key, secret_key)
+    def __init__(self, dbname, username, password):
+        self.m = MongoDBPipeline(dbname,username,password)
+        self.m_auth = self.m.auth
+        self.keys = self.m.setCol(settings['QINIU_USERNAME'], settings['QINIU_PROFILE']).col.find()[0]['keys']
+        self.access_key = self.keys['access_key']
+        self.secret_key = self.keys['secret_key']
     
-    # bucket
-    bucket = BucketManager(auth)
+        # 构建鉴权对象
+        self.auth = self.Auth(self.access_key, self.secret_key)
+    
+        # bucket
+        self.bucket = BucketManager(self.auth)
 
     #要上传的空间
     bucket_name = settings['BUCKET_NAME']
@@ -128,7 +150,7 @@ class QiniuPipeline():
         return ret
 
     def getFile(self, key):
-        url = self.auth.private_download_url('http://p3f2fmqs8.bkt.clouddn.com/' + key)
+        url = self.auth.private_download_url(settings['QINIU_PRIVATE'] + key)
         return url
 
     def ls(self):
@@ -144,21 +166,24 @@ class QiniuPipeline():
 # ==================
 
 class TwitterPipeline():
-    
-    # import
-    import tweepy
 
-    # init m
-    m = MongoDBPipeline()
-    keys = m.setCol(settings['TWITTER_USERNAME'], settings['TWITTER_PROFILE']).col.find()[0]['keys']
+    def __init__(self, dbname, username, password):
 
-    # get keys
-    consumer_key = keys['consumer_key']
-    consumer_secret = keys['consumer_secret']
-    access_token = keys['access_token']
-    access_token_secret = keys['access_token_secret']
+        # import
+        import tweepy
 
-    # auth and get APIs
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret) 
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth)
+        # init m
+        self.m = MongoDBPipeline(dbname, username, password)
+        self.m_auth = self.m.auth
+        self.keys = self.m.setCol(settings['TWITTER_USERNAME'], settings['TWITTER_PROFILE']).col.find()[0]['keys']
+
+        # get keys
+        consumer_key = self.keys['consumer_key']
+        consumer_secret = self.keys['consumer_secret']
+        access_token = self.keys['access_token']
+        access_token_secret = self.keys['access_token_secret']
+
+        # auth and get APIs
+        auth = tweepy.OAuthHandler(self.consumer_key, self.consumer_secret) 
+        auth.set_access_token(self.access_token, self.access_token_secret)
+        api = tweepy.API(self.auth)
